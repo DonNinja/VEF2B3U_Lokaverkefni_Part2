@@ -1,0 +1,12 @@
+canvas {
+	border: 1px solid black;
+	background-color: #f1f1f1;
+}
+body {
+	margin-top: 5em;
+	text-align: center;
+}
+img {
+	width: 45px;
+	height: auto;
+}
