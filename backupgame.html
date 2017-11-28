@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="adal.css">
+	<title></title>
+</head>
+<body onload="startGame()">
+	<canvas></canvas>
+	<script src="jquery.js"></script>
+	<script type="text/javascript">
+		"use strict";
+var myGamePiece;
+var myWalls = [];
+var myScore;
+var can = document.getElementsByTagName("canvas")[0];
+var onbottom = true;
+
+function startGame() {
+	myGamePiece = new component(30, 30, "red", 50, 120);
+	myScore = new component("20px", "Comic Sans", "white", 280, 40, "text");
+	myGameArea.start();
+}
+
+var myGameArea = {
+	canvas : can,
+	start : function() {
+		this.canvas.width = 480;
+		this.canvas.height = 280;
+		this.context = this.canvas.getContext("2d");
+		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+		this.frameNo = 0;
+		this.interval = setInterval(updateGameArea, 20);
+		window.addEventListener('keydown', function(e) {
+			myGameArea.keys = (myGameArea.keys || []);
+			myGameArea.keys[e.keyCode] = true;
+		})
+		window.addEventListener('keyup', function(e) {
+			myGameArea.keys[e.keyCode] = false;
+		})
+	},
+	clear : function() {
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	},
+	stop : function() {
+		clearInterval(this.interval);
+	}
+};
+
+function everyinterval(n) {
+	if ((myGameArea.frameNo / n) % 1 == 0) {
+		return true;
+	}
+	return false;
+}
+
+function component(width, height, color, x, y, type) {
+	this.type = type;
+	this.width = width;
+	this.height = height;
+	this.speedX = 0;
+	this.speedY = 0;
+	this.x = x;
+	this.y = y;
+	this.gravity = 0.1;
+	this.gravitySpeed = 0;
+	this.update = function() {
+			var ctx = myGameArea.context;
+			if (this.type == "text") {
+				ctx.font = this.width + " " + this.height;
+				ctx.fillStyle = color;
+				ctx.fillText(this.text, this.x, this.y);
+			}
+			else {
+				ctx.fillStyle = color;
+				ctx.fillRect(this.x, this.y, this.width, this.height);
+			}
+		}
+	this.newPos = function() {
+		this.gravitySpeed += this.gravity;
+		this.x += this.speedX;
+		this.y += this.speedY + this.gravitySpeed;
+		this.hitBottom();
+	}
+	this.hitBottom = function() {
+		var rockbottom = myGameArea.canvas.height - this.height;
+		if (this.y > rockbottom) {
+			this.y = rockbottom;
+			onbottom = true;
+		}
+		else {
+			onbottom = false;
+		}
+	}
+	this.crashWith = function(otherobj) {
+		var myleft = this.x;
+		var myright = this.x + (this.width);
+		var mytop = this.y;
+		var mybottom = this.y + (this.height);
+		var otherleft = otherobj.x;
+		var otherright = otherobj.x + (otherobj.width);
+		var othertop = otherobj.y;
+		var otherbottom = otherobj.y + (otherobj.height);
+		var crash = true;
+		if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+			crash = false;
+		}
+		return crash;
+	}
+}
+
+function updateGameArea() {
+	var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+	for (var i = 0; i < myWalls.length; i++) {
+		if (myGamePiece.crashWith(myWalls[i])) {
+			myGameArea.stop();
+			return;
+		}
+	}
+	myGameArea.clear();
+	myGameArea.frameNo += 1;
+	if (myGameArea.frameNo == 1 || everyinterval(150)) {
+		x = myGameArea.canvas.width;
+		minHeight = 20;
+		maxHeight = 200;
+		height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+		minGap = 50;
+		maxGap = 200;
+		gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
+		myWalls.push(new component(15, height, "lime", x, 0));
+		myWalls.push(new component(15, x - height - gap, "lime", x, height + gap));
+	}
+	for (var i = 0; i < myWalls.length; i++) {
+		myWalls[i].x += -2;
+		myWalls[i].update();
+	}
+	myGamePiece.speedX = 0;
+	myGamePiece.speedY = 0;
+	if (myGameArea.keys && myGameArea.keys[87]) {myGamePiece.speedY = -2.5; myGamePiece.gravitySpeed = 0; }
+	//if (myGameArea.keys && myGameArea.keys[83]) {myGamePiece.speedY = 2.5; }
+	if (myGameArea.keys && myGameArea.keys[68]) {myGamePiece.speedX = 2.5; }
+	if (myGameArea.keys && myGameArea.keys[65]) {myGamePiece.speedX = -2.5; }
+	if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = -2.5; myGamePiece.gravitySpeed = 0; }
+	//if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 2.5; }
+	if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 2.5; }
+	if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -2.5; }
+	myScore.text = "STIG: " + myGameArea.frameNo;
+	myScore.update();
+	myGamePiece.newPos();
+	myGamePiece.update();
+}
+	</script>
+</body>
+</html>
