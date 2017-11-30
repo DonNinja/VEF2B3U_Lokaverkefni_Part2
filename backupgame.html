@@ -5,7 +5,12 @@
 	<title></title>
 </head>
 <body onload="startGame()">
-	<canvas></canvas>
+	<div class="container">
+		<canvas>
+			
+		</canvas>
+		<div></div>
+	</div>
 	<script src="jquery.js"></script>
 	<script type="text/javascript">
 		"use strict";
@@ -14,9 +19,10 @@ var myWalls = [];
 var myScore;
 var can = document.getElementsByTagName("canvas")[0];
 var onbottom = true;
+var onright = true;
 
 function startGame() {
-	myGamePiece = new component(30, 30, "red", 50, 120);
+	myGamePiece = new component(30, 30, "red", 50, 280);
 	myScore = new component("20px", "Comic Sans", "white", 280, 40, "text");
 	myGameArea.start();
 }
@@ -33,10 +39,10 @@ var myGameArea = {
 		window.addEventListener('keydown', function(e) {
 			myGameArea.keys = (myGameArea.keys || []);
 			myGameArea.keys[e.keyCode] = true;
-		})
+		});
 		window.addEventListener('keyup', function(e) {
 			myGameArea.keys[e.keyCode] = false;
-		})
+		});
 	},
 	clear : function() {
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -47,7 +53,7 @@ var myGameArea = {
 };
 
 function everyinterval(n) {
-	if ((myGameArea.frameNo / n) % 1 == 0) {
+	if ((myGameArea.frameNo / n) % 1 === 0) {
 		return true;
 	}
 	return false;
@@ -74,23 +80,31 @@ function component(width, height, color, x, y, type) {
 				ctx.fillStyle = color;
 				ctx.fillRect(this.x, this.y, this.width, this.height);
 			}
-		}
+		};
 	this.newPos = function() {
 		this.gravitySpeed += this.gravity;
 		this.x += this.speedX;
 		this.y += this.speedY + this.gravitySpeed;
 		this.hitBottom();
-	}
+	};
 	this.hitBottom = function() {
+		var completeright = myGameArea.canvas.width - this.width;
+		var completeleft = 0;
+		var skyhigh = 0;
 		var rockbottom = myGameArea.canvas.height - this.height;
 		if (this.y > rockbottom) {
 			this.y = rockbottom;
-			onbottom = true;
 		}
-		else {
-			onbottom = false;
+		if (this.y < skyhigh) {
+			this.y = skyhigh;
 		}
-	}
+		if (this.x > completeright) {
+			this.x = completeright;
+		}
+		if (this.x < completeleft) {
+			this.x = completeleft;
+		}
+	};
 	this.crashWith = function(otherobj) {
 		var myleft = this.x;
 		var myright = this.x + (this.width);
@@ -105,20 +119,36 @@ function component(width, height, color, x, y, type) {
 			crash = false;
 		}
 		return crash;
-	}
+	};
 }
 
 function updateGameArea() {
 	var x, height, gap, minHeight, maxHeight, minGap, maxGap;
-	for (var i = 0; i < myWalls.length; i++) {
-		if (myGamePiece.crashWith(myWalls[i])) {
+	for (var j = 0; j < myWalls.length; j++) {
+		if (myGamePiece.crashWith(myWalls[j])) {
 			myGameArea.stop();
 			return;
 		}
 	}
 	myGameArea.clear();
 	myGameArea.frameNo += 1;
-	if (myGameArea.frameNo == 1 || everyinterval(150)) {
+	var interval = 0;
+	if (myGameArea.frameNo < 1000) {
+		interval = 150;
+	}
+	else if (myGameArea.frameNo < 2000) {
+		interval = 135;
+	}
+	else if (myGameArea.frameNo < 3000) {
+		interval = 120;
+	}
+	else if (myGameArea.frameNo < 4000) {
+		interval = 105;
+	}
+	else {
+		interval = 95;
+	}
+	if (myGameArea.frameNo == 1 || everyinterval(interval)) {
 		x = myGameArea.canvas.width;
 		minHeight = 20;
 		maxHeight = 200;
@@ -130,8 +160,26 @@ function updateGameArea() {
 		myWalls.push(new component(15, x - height - gap, "lime", x, height + gap));
 	}
 	for (var i = 0; i < myWalls.length; i++) {
-		myWalls[i].x += -2;
-		myWalls[i].update();
+		if (myGameArea.frameNo < 1000) {
+			myWalls[i].x += -2;
+			myWalls[i].update();	
+		}
+		else if (myGameArea.frameNo < 2000) {
+			myWalls[i].x += -3;
+			myWalls[i].update();
+		}
+		else if (myGameArea.frameNo < 3000) {
+			myWalls[i].x += -4;
+			myWalls[i].update();
+		}
+		else if (myGameArea.frameNo < 4000) {
+			myWalls[i].x += -5;
+			myWalls[i].update();
+		}
+		else {
+			myWalls[i].x += -6;
+			myWalls[i].update();
+		}
 	}
 	myGamePiece.speedX = 0;
 	myGamePiece.speedY = 0;
