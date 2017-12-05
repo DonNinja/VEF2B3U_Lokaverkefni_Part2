@@ -1,5 +1,5 @@
 canvas {
-	border: 1px solid white;
+	border: 5px solid lime;
 	background-color: black;
 	text-shadow: white 1px 1px 1px;
 }
@@ -9,4 +9,7 @@ body {
 }
 .container {
 	line-height: 280px;
+}
+span {
+	margin-top: 0em;
 }
