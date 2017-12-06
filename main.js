@@ -7,16 +7,16 @@
 
 		function startGame() {
 			myGamePiece = new component(30, 30, "red", 50, 280); //þetta lætur inn spilarann á canvasinn
-			myScore = new component("20px", "Comic Sans", "white", 280, 40, "text"); //Þetta setur "STIG" textann á canvasinn
-			gameOver = new component("5em", "Comic Sans", "violet", 60, 160, "text");
+			myScore = new component("20px", "Comic Sans", "white", 280, 40, "text"); //Býr til texta objectið sem er fyrir stiginn, en textinn sjálfur er settur inn seinna
+			gameOver = new component("5em", "Comic Sans", "violet", 60, 160, "text"); //Býr til texta objectið sem kemur þegar maður tapar, en hann heldur engum texta í sér
 			myWalls = [];
 			myGameArea.start();
 		}
 
 		function restartGame() { //Byrjar leikinn aftur
-			myGameArea.stop();
-			myGameArea.clear();
-			startGame();
+			myGameArea.stop(); //Stoppar leikinn, þannig að allt er sett í base values. 
+			myGameArea.clear(); //Hreinsar canvasinn þannig að 
+			startGame(); //Keyrir startGame function
 		}
 
 		var myGameArea = {
@@ -87,16 +87,16 @@
 				var completeleft = 0;
 				var skyhigh = 0;
 				var rockbottom = myGameArea.canvas.height - this.height;
-				if (this.y > rockbottom) {
+				if (this.y > rockbottom) { //Ef kassinn fer á botninn þá breytir hann ekki um y position
 					this.y = rockbottom;
 				}
-				if (this.y < skyhigh) {
+				if (this.y < skyhigh) { //Ef kassinn fer á loftið þá breytir hann ekki um y position
 					this.y = skyhigh;
 				}
-				if (this.x > completeright) {
+				if (this.x > completeright) { //Ef kassinn fer á hægri vegginn þá breytir hann ekki um x position
 					this.x = completeright;
 				}
-				if (this.x < completeleft) {
+				if (this.x < completeleft) { //Ef kassinn fer á vinstri vegginn þá breytir hann ekki um x position
 					this.x = completeleft;
 				}
 			};
@@ -131,9 +131,9 @@
 			myGameArea.frameNo += 1;
 			var interval = 0;
 			if (myGameArea.frameNo < 150) {
-				interval = 0;
+				interval = 0; //Setur interval á 0 til þess að það býr ekki til 2 veggi þegar fyrsti veggurin er búinn til.
 			}
-			else if (myGameArea.frameNo < 500) { //minnkar tímann á milli veggja á hvern fimm hundruð
+			else if (myGameArea.frameNo < 500) { //minnkar tímann á milli veggja á hvern fimm hundruð því annars væri of mikill tími á milli veggja og það væri allt of létt.
 				interval = 150;
 			}
 			else if (myGameArea.frameNo < 1000) {
@@ -143,13 +143,13 @@
 				interval = 120;
 			}
 			else if (myGameArea.frameNo < 2000) {
-				interval = 105;
+				interval = 110;
 			}
 			else {
 				interval = 95;
 			}
 			if (myGameArea.frameNo == 1 || everyinterval(interval)) { //Runnar þegar frame number er 1 og á hverju interval sem er breytt hérna að ofan
-				x = myGameArea.canvas.width;
+				x = myGameArea.canvas.width; //x er lengd canvasins
 				minHeight = 20;
 				maxHeight = 200;
 				height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight); //Reiknar hæð efri veggsins 
@@ -184,7 +184,6 @@
 			myGamePiece.speedX = 0;
 			myGamePiece.speedY = 0;
 			if (myGameArea.keys && myGameArea.keys[87]) {myGamePiece.speedY = -2.5; myGamePiece.gravitySpeed = 0; } //Ef notandi ýtir á "W" þá hoppar spilarinn
-			if (myGameArea.keys && myGameArea.keys[83]) {myGamePiece.speedY = 2.5; }
 			if (myGameArea.keys && myGameArea.keys[68]) {myGamePiece.speedX = 2.5; } //Ef notandi ýtir á "D" þá fer spilarinn til hægri
 			if (myGameArea.keys && myGameArea.keys[65]) {myGamePiece.speedX = -2.5; } //Ef notandi ýtir á "A" þá fer spilarinn til vinstri
 			if (myGameArea.keys && myGameArea.keys[38]) { myGamePiece.speedY = -2.5; myGamePiece.gravitySpeed = 0; } //Ef notandi ýtir á upp örvatakkann þá hoppar spilarinn
@@ -192,14 +191,14 @@
 			if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 2.5; } //Ef notandi ýtir á hægri örvatakkann þá fer spilarinn til hægri
 			if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -2.5; } //Ef notandi ýtir á vinstri örvatakkann þá fer spilarinn til vinstri
 			if (myGameArea.frameNo < 0) {
-				myScore.text = "STIG: 0";
+				myScore.text = "STIG: 0"; //Setur textann fyrir stiginn
 			}
 			else {
-				myScore.text = "STIG: " + myGameArea.frameNo;
+				myScore.text = "STIG: " + myGameArea.frameNo; //Setur textann fyrir stiginn þannig að það er með sömu tölu og frameNo
 			}
 			myScore.update();
 			myGamePiece.newPos();
 			myGamePiece.update();
 		}
-			var buton = document.getElementsByTagName("button")[0];
-			buton.addEventListener("click", restartGame);
+			var buton = document.getElementsByTagName("button")[0]; //lætur buton verða Restart takkinn
+			buton.addEventListener("click", restartGame); //Bætir við event listener á Restart takkann til að runna restartGame function
