@@ -200,5 +200,10 @@
 			myGamePiece.newPos();
 			myGamePiece.update();
 		}
+<<<<<<< HEAD:main.js
 			var buton = document.getElementsByTagName("button")[0]; //lætur buton verða Restart takkinn
 			buton.addEventListener("click", restartGame); //Bætir við event listener á Restart takkann til að runna restartGame function
+=======
+			var buton = document.getElementsByTagName("button")[0];
+			buton.addEventListener("click", restartGame);
+>>>>>>> 42bede26221b63f84e549a94ab49c7ef222ef050:main.js
